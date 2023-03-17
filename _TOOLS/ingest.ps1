@@ -12,6 +12,31 @@ do {
 # Get the parent directory of the destination directory
 $parentDirectory = Split-Path $destinationDirectory -Parent
 
+# Define a function to create subdirectories for a given bates number
+function CreateSubdirectories($batesNumber) {
+    # Split the bates number into its constituent parts
+    $prefix, $firstNumber, $secondNumber, $thirdNumber = $batesNumber -split '\.'
+
+    # Create the subdirectory paths
+    $firstSubdirectory = Join-Path $destinationDirectory $prefix
+    $secondSubdirectory = Join-Path $firstSubdirectory $firstNumber
+    $thirdSubdirectory = Join-Path $secondSubdirectory $secondNumber
+
+    # Create the subdirectories if they don't already exist
+    if (-not (Test-Path $firstSubdirectory)) {
+        New-Item -Path $firstSubdirectory -ItemType Directory | Out-Null
+    }
+    if (-not (Test-Path $secondSubdirectory)) {
+        New-Item -Path $secondSubdirectory -ItemType Directory | Out-Null
+    }
+    if (-not (Test-Path $thirdSubdirectory)) {
+        New-Item -Path $thirdSubdirectory -ItemType Directory | Out-Null
+    }
+
+    # Return the path to the third subdirectory
+    return $thirdSubdirectory
+}
+
 # Split the starting bates number into its constituent parts
 $prefix, $firstNumber, $secondNumber, $thirdNumber = $batesNumber -split '\.'
 
@@ -27,8 +52,9 @@ Get-ChildItem -Path $sourceDirectory -Recurse -File | ForEach-Object {
     # Create a new filename based on the bates number
     $newFilename = "$prefix.$firstNumber.$secondNumber.{0:D4}$extension" -f $lastFourDigits
 
-    # Copy the file to the destination directory using the new filename
-    $newFilePath = Join-Path $destinationDirectory $newFilename
+    # Create subdirectories for the bates number and copy the file to the destination directory using the new filename
+    $subdirectoryPath = CreateSubdirectories "$prefix.$firstNumber.$secondNumber"
+    $newFilePath = Join-Path $subdirectoryPath $newFilename
     Copy-Item -Path $_.FullName -Destination $newFilePath
 
     # Output a CSV row with the bates number, original filename, and original path
@@ -38,6 +64,6 @@ Get-ChildItem -Path $sourceDirectory -Recurse -File | ForEach-Object {
         OriginalPath = $_.FullName
     } | Export-Csv -Path "$parentDirectory\output.csv" -Append -NoTypeInformation
 
-    # Increment the counter for the last four digits of the bates number
+   # Increment the counter for the last four digits of the bates number
     $lastFourDigits++
 }

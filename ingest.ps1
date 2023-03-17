@@ -1,8 +1,9 @@
 # Prompt the user for the source directory path
 $sourceDirectory = Read-Host "Enter the path to the source directory"
 
-# Prompt the user for the destination directory path
-$destinationDirectory = Read-Host "Enter the path to the destination directory"
+# Define the path to the destination directory (inside an Evidence folder one directory above where the script is being run)
+$parentDirectory = Split-Path $MyInvocation.MyCommand.Path -Parent
+$destinationDirectory = Join-Path $parentDirectory "Evidence"
 
 # Prompt the user for the starting bates number
 do {

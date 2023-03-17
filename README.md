@@ -15,3 +15,8 @@ The `Evidence` folder contains a nested set of folders in the format typically e
 
 ## Ingester
 `ingester.ps1` is a PowerShell script that sits takes the following input:
+
+
+# Enron Dataset
+
+Where applicable, this repository uses the Enron corpus dataset, which is publicly available data available from [http://www.cs.cmu.edu/~./enron/](http://www.cs.cmu.edu/~./enron/).

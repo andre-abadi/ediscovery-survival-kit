@@ -11,11 +11,14 @@ The `Evidence` folder contains a nested set of folders in the format typically e
 
 # Tools
 
-
-
 ## Ingester
 `ingester.ps1` is a PowerShell script that sits takes the following input:
 
+
+# Limitations & To Do List
+
+- Does not convert to PDF or create endorsable images
+- Due to the above, does not stamp documents or enumerate pages
 
 # Enron Dataset
 

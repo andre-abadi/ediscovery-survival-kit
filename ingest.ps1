@@ -1,5 +1,9 @@
-# Prompt the user for the source directory path
-$sourceDirectory = Read-Host "Enter the path to the source directory"
+# Prompt the user for the source directory path, defaulting to "_sample_data" if no input is given
+$sourceDirectory = Read-Host "Enter the path to the source directory (default: `_sample_data`)"
+if (-not $sourceDirectory) {
+    $parentDirectory = Split-Path $MyInvocation.MyCommand.Path -Parent
+    $sourceDirectory = Join-Path $parentDirectory "_sample_data"
+}
 
 # Define the path to the destination directory (inside an Evidence folder one directory above where the script is being run)
 $parentDirectory = Split-Path $MyInvocation.MyCommand.Path -Parent
@@ -49,6 +53,9 @@ Get-ChildItem -Path $sourceDirectory -Recurse -File | ForEach-Object {
 
     # Get the file extension of the original file
     $extension = $_.Extension
+
+    # Calculate the MD5 hash of the file
+    $md5 = (Get-FileHash $_.FullName -Algorithm MD5).Hash
 
     # Create a new filename based on the bates number
     $newFilename = "$prefix.$firstNumber.$secondNumber.{0:D4}$extension" -f $lastFourDigits
